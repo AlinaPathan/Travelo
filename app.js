@@ -1,0 +1,78 @@
+const express=require("express")
+const app=express()
+const mongoose=require("mongoose")
+const Listing=require("./models/listing.js")
+const path=require("path");
+const methodOverride=require("method-override")
+const ejsMate=require("ejs-mate")
+app.set("view engine","ejs")
+app.set("views",path.join(__dirname,"views"));
+app.use(express.urlencoded({extended:true}))
+app.use(methodOverride("_method"))
+app.engine("ejs",ejsMate)
+app.use(express.static(path.join(__dirname,"/public")))
+//connecting database
+const MONGO_URL='mongodb://127.0.0.1:27017/travelo';
+async function main(){
+    await mongoose.connect(MONGO_URL)
+}
+main().then(()=>{
+    console.log("connected to DB");
+}).catch((err)=>{
+    console.log(err)
+
+})
+//alllist home page
+app.get("/listing",async(req,res)=>{
+ const allListing= await Listing.find({})
+ res.render("listings/listing.ejs",{allListing})
+})
+//newww
+app.get("/listing/new",(req,res)=>{
+    res.render("listings/new.ejs")
+})
+//add created listing
+app.post("/listing",async(req,res)=>{
+ let newListing=new Listing(req.body.listing);
+await newListing.save()
+ res.redirect("/listing")
+})
+
+//show route 
+app.get("/listing/:id",async (req,res)=>{
+ let {id}=req.params;
+const listing= await Listing.findById(id);
+res.render("listings/show.ejs",{listing})
+})
+
+//Edit listing
+app.get("/listing/:id/edit",async(req,res)=>{
+    let {id}=req.params;
+const listing= await Listing.findById(id);
+res.render("listings/edit.ejs",{listing})
+})
+//post edited listing
+app.put("/listing/:id",async(req,res)=>{
+    let {id}=req.params;
+   await Listing.findByIdAndUpdate(id,{...req.body.listing})
+    // {...req.body.listing} is for the reconstruction of the listing object with new values.
+   res.redirect(`/listing/${id}`)//redirect to show page
+})
+
+//delete listing
+app.delete("/listing/:id",async(req,res)=>{
+    let {id}=req.params;
+  let deletedListing= await Listing.findByIdAndDelete(id)
+ console.log(deletedListing)
+  res.redirect("/listing")
+})
+
+
+
+app.get("/",(req,res)=>{
+    res.send("working")
+})
+
+app.listen(3000,()=>{
+    console.log("app is listening to port 3000")
+})

@@ -1,0 +1,19 @@
+<%layout("/layouts/boilerplate")%>
+<body>
+    <form action="/listing" method="POST">
+        <input type="text" name="listing[title]" placeholder="Enter the title">
+       <!-- we are making the name as keys of object so can be accessed easily -->
+        <br><br>
+        <textarea name="listing[description]" placeholder="Enter the description"  id="description"></textarea>
+        <br><br>
+        <input type="image" name="listing[image]" placeholder="Enter link/URL">
+        <br><br>
+        <input type="number" name="listing[price]" placeholder="Enter the price">
+        <br><br>
+        <input type="text" name="listing[location]" placeholder="Enter the location">
+        <br><br>
+        <input type="text" name="listing[country]" placeholder="Enter the country">
+        <br><br>
+        <button>Add </button>
+    </form>
+</body>
