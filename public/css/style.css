@@ -84,3 +84,8 @@ body{
 .show-image{
   height: 30vh;
 }
+.btns{
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+}
