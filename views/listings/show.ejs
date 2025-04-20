@@ -10,23 +10,19 @@
             <div class="card col-6 offset-2" >
                 <img src="<%=listing.image%>" class="show-image card-img-top" alt="Listing image">
                 <div class="card-body">
-                  <p class="card-text">Title:<%=listing.title%></p>
+                  <p class="card-text">
+                  <b>  Title:<%=listing.title%></b> <br>
+                  Description<%=listing.description%> <br>
+                  Price: <%=listing.price%> <br>
+                  Location<%=listing.location%> <br>
+                  Country<%=listing.country%> <br>
+                </p>
                 </div>
               </div>
         
-      
-
-
-    <ul>
-        <li>Title:<%=listing.title%></li>
-        <li>Description<%=listing.description%></li>
-        <li>Price: <%=listing.price%></li>
-        <li>Location<%=listing.location%></li>
-        <li>Country<%=listing.country%></li>
-    </ul>
     <a href="/listing/<%=listing._id%>/edit">Edit</a>
     <form  method="POST" action="/listing/<%=listing._id%>?_method=DELETE">
-        <button>DELETE</button>
+        <button class="btn btn-dark">DELETE</button>
     </form>
 </div>
 </div>
