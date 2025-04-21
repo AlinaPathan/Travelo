@@ -16,14 +16,17 @@
                   Price: <%=listing.price%> <br>
                   Location: <%=listing.location%> <br>
                   Country: <%=listing.country%> <br> 
-           <a  class="btn btn-dark edit-btn" href="/listing/<%=listing._id%>/edit">EDIT
-           </a>
+                  <div class="btns col-6 offset-2T"> 
+                    <a  class="btn btn-dark edit-btn" href="/listing/<%=listing._id%>/edit">EDIT</a>
+            
+                    <form method="POST" action="/listing/<%=listing._id%>?_method=DELETE">
+                           <button class="btn btn-dark">DELETE</button>
+                        </form>
+                    </div>
                 </p>
                 </div>
              </div>
-       <div class="btns col-6 offset-2T" method="POST" action="/listing/<%=listing._id%>?_method=DELETE">
-               <button class="btn btn-dark">DELETE</button>
-            </form>
+     
         </div>
 </div>
 <br>
