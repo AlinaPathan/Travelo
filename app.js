@@ -61,13 +61,11 @@ app.put("/listing/:id",async(req,res)=>{
 
 //delete listing
 app.delete("/listing/:id",async(req,res)=>{
-    let {id}=req.params;
+  let {id}=req.params;
   let deletedListing= await Listing.findByIdAndDelete(id)
- console.log(deletedListing)
+  console.log(deletedListing)
   res.redirect("/listing")
 })
-
-
 
 app.get("/",(req,res)=>{
     res.send("working")
