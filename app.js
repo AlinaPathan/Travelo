@@ -11,6 +11,7 @@ app.use(express.urlencoded({extended:true}))
 app.use(methodOverride("_method"))
 app.engine("ejs",ejsMate)
 app.use(express.static(path.join(__dirname,"/public")))
+const wrapAsync=require("./utils/wrapAsync.js")
 //connecting database
 const MONGO_URL='mongodb://127.0.0.1:27017/travelo';
 async function main(){
@@ -32,11 +33,14 @@ app.get("/listing/new",(req,res)=>{
     res.render("listings/new.ejs")
 })
 //add created listing
-app.post("/listing",async(req,res)=>{
- let newListing=new Listing(req.body.listing);
+app.post("/listing",wrapAsync(async(req,res,next)=>{
+  
+let newListing=new Listing(req.body.listing);
 await newListing.save()
  res.redirect("/listing")
-})
+  
+    next(err);
+}));
 
 //show route 
 app.get("/listing/:id",async (req,res)=>{
@@ -69,6 +73,10 @@ app.delete("/listing/:id",async(req,res)=>{
 
 app.get("/",(req,res)=>{
     res.send("working")
+})
+
+app.use((err,req,res,next)=>{
+    res.send("something went wrong");
 })
 
 app.listen(3000,()=>{
