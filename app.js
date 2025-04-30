@@ -35,8 +35,7 @@ app.get("/listing/new",(req,res)=>{
 })
 //add created listing
 app.post("/listing",wrapAsync(async(req,res,next)=>{
-  
-let newListing=new Listing(req.body.listing);
+  let newListing=new Listing(req.body.listing);
 await newListing.save()
  res.redirect("/listing")
   
@@ -75,14 +74,19 @@ app.delete("/listing/:id",wrapAsync(async(req,res)=>{
 app.get("/",(req,res)=>{
     res.send("working")
 })
-app.all("*",(req,res,next)=>{
-    next(new ExpressError(400,"Page not found!!"));
-})
-app.use((err,req,res,next)=>{
-   let{statusCode,message}=err;
-   res.status(statusCode).send(message);
-})
 
+app.use((err, req, res, next) => {
+    const { statusCode = 500, message = "Something went wrong!" } = err;
+    res.status(statusCode).render("error", { error: message });
+});
+
+
+app.use((err, req, res, next) => {
+    const { statusCode = 500, message = "Something went wrong!" } = err;
+    res.status(statusCode).render("error", { error: message });
+    next(new ExpressError(400,"Page not found!!"));
+
+});
 app.listen(3000,()=>{
     console.log("app is listening to port 3000")
 })
