@@ -35,8 +35,41 @@ app.get("/listing/new",(req,res)=>{
 })
 //add created listing
 app.post("/listing",wrapAsync(async(req,res,next)=>{
-  let newListing=new Listing(req.body.listing);
-await newListing.save()
+    if(!req.body.listing){
+        throw new ExpressError(400,"Listing not Found")
+    }
+       let newListing=new Listing(req.body.listing);
+if(!newListing.title){
+    throw new ExpressError(400,"Title is missing!")
+
+}
+if(!newListing.description){
+    throw new ExpressError(400,"Description is missing!")
+
+}
+if(!newListing.price){
+    throw new ExpressError(400," Price is missing!")
+
+}
+if(!newListing.location){
+    throw new ExpressError(400,"Location is missing!")
+
+}
+if(!newListing.country){
+    throw new ExpressError(400,"Country is missing!")
+
+}
+
+
+
+
+
+
+ 
+
+
+
+       await newListing.save()
  res.redirect("/listing")
   
   
@@ -76,10 +109,10 @@ app.get("/",(req,res)=>{
 })
 
 app.use((err, req, res, next) => {
-    const { statusCode = 500, message = "Something went wrong!" } = err;
-    res.status(statusCode).render("error", { error: message });
+    // const { statusCode = 500, message = "Something went wrong!" } = err;
+    // res.status(statusCode).render("error", { error: message });
+      res.render("error.ejs")
 });
-
 
 app.use((err, req, res, next) => {
     const { statusCode = 500, message = "Something went wrong!" } = err;
