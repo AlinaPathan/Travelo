@@ -13,6 +13,8 @@ app.engine("ejs",ejsMate)
 app.use(express.static(path.join(__dirname,"/public")))
 const wrapAsync=require("./utils/wrapAsync.js")
 const ExpressError=require("./utils/ExpressError.js")
+const{listingSchema}=require("./Schema.js")
+
 //connecting database
 const MONGO_URL='mongodb://127.0.0.1:27017/travelo';
 async function main(){
@@ -33,43 +35,23 @@ app.get("/listing",wrapAsync(async(req,res)=>{
 app.get("/listing/new",(req,res)=>{
     res.render("listings/new.ejs")
 })
+
+//to validate schema from joi
+const validateListing=(req,res,next)=>{
+    let {error}=listingSchema.validate(req.body);
+  console.log(result)
+  if(error){
+    throw new ExpressError(400,result.error)
+  }else{
+    next()
+  }
+}
+
 //add created listing
-app.post("/listing",wrapAsync(async(req,res,next)=>{
-    if(!req.body.listing){
-        throw new ExpressError(400,"Listing not Found")
-    }
+app.post("/listing",validateListing,wrapAsync(async(req,res,next)=>{
+  
        let newListing=new Listing(req.body.listing);
-if(!newListing.title){
-    throw new ExpressError(400,"Title is missing!")
-
-}
-if(!newListing.description){
-    throw new ExpressError(400,"Description is missing!")
-
-}
-if(!newListing.price){
-    throw new ExpressError(400," Price is missing!")
-
-}
-if(!newListing.location){
-    throw new ExpressError(400,"Location is missing!")
-
-}
-if(!newListing.country){
-    throw new ExpressError(400,"Country is missing!")
-
-}
-
-
-
-
-
-
- 
-
-
-
-       await newListing.save()
+      await newListing.save()
  res.redirect("/listing")
   
   
@@ -89,7 +71,7 @@ const listing= await Listing.findById(id);
 res.render("listings/edit.ejs",{listing})
 }))
 //post edited listing
-app.put("/listing/:id",wrapAsync(async(req,res)=>{
+app.put("/listing/:id",validateListing,wrapAsync(async(req,res)=>{
     let {id}=req.params;
    await Listing.findByIdAndUpdate(id,{...req.body.listing})
     // {...req.body.listing} is for the reconstruction of the listing object with new values.
