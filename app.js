@@ -41,7 +41,8 @@ const validateListing=(req,res,next)=>{
     let {error}=listingSchema.validate(req.body);
   console.log(result)
   if(error){
-    throw new ExpressError(400,result.error)
+    let errMSg=error.details.map((el)=>el.message).join(",");
+    throw new ExpressError(400,errMsg)
   }else{
     next()
   }
