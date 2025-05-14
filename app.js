@@ -42,6 +42,7 @@ const validateListing = (req, res, next) => {
   }
 };
 const validateReview = (req, res, next) => {
+
   if (req.body.review && req.body.review.comment) {
     req.body.review.comment = req.body.review.comment.trim();
   }
@@ -89,7 +90,7 @@ app.get(
   "/listing/:id",
   wrapAsync(async (req, res) => {
     let { id } = req.params;
-    const listing = await Listing.findById(id);
+    const listing = await Listing.findById(id).populate("reviews");
     res.render("listings/show.ejs", { listing });
   })
 );
