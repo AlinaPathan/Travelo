@@ -126,7 +126,13 @@ app.delete(
     res.redirect("/listing");
   })
 );
+
+
+
+
 //reviews
+
+//post a review
 app.post("/listing/:id/reviews",validateReview, wrapAsync(async (req, res) => {
   let listing = await Listing.findById(req.params.id);
   let newReview = new Reviews(req.body.review);
@@ -135,6 +141,15 @@ app.post("/listing/:id/reviews",validateReview, wrapAsync(async (req, res) => {
   await listing.save();
  res.redirect(`/listing/${listing._id}`);
 }));
+
+
+//delete a review
+app.delete("/listing/:id/reviews/:reviewId",wrapAsync(async(req,res)=>{
+  let {id ,reviewId }=req.params;
+  await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+  await Reviews.findByIdAndDelete(reviewId)
+  res.redirect(`/listing/${id}`)
+}))
 
 app.get("/", (req, res) => {
   res.send("working");
