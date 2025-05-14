@@ -14,7 +14,7 @@ app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const { listingSchema } = require("./Schema.js");
+const { listingSchema,reviewSchema } = require("./Schema.js");
 
 //connecting database
 const MONGO_URL = "mongodb://127.0.0.1:27017/travelo";
@@ -28,6 +28,36 @@ main()
   .catch((err) => {
     console.log(err);
   });
+
+
+//to validate schema from joi
+const validateListing = (req, res, next) => {
+  let { error } = listingSchema.validate(req.body);
+  console.log(error);
+  if (error) {
+    let errMsg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(400, errMsg);
+  } else {
+    next();
+  }
+};
+const validateReview = (req, res, next) => {
+  if (req.body.review && req.body.review.comment) {
+    req.body.review.comment = req.body.review.comment.trim();
+  }
+
+  let { error } = reviewSchema.validate(req.body);
+  console.log(error);
+  if (error) {
+    let errMsg = error.details.map((el) => el.message).join(", ");
+    throw new ExpressError(400, errMsg);
+  } else {
+    next();
+  }
+};
+
+
+
 //alllist home page
 app.get(
   "/listing",
@@ -41,17 +71,7 @@ app.get("/listing/new", (req, res) => {
   res.render("listings/new.ejs");
 });
 
-//to validate schema from joi
-const validateListing = (req, res, next) => {
-  let { error } = listingSchema.validate(req.body);
-  console.log(result);
-  if (error) {
-    let errMSg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(400, errMsg);
-  } else {
-    next();
-  }
-};
+
 
 //add created listing
 app.post(
@@ -106,30 +126,31 @@ app.delete(
   })
 );
 //reviews
-app.post("/listings/:id/reviews", async (req, res) => {
+app.post("/listing/:id/reviews",validateReview, wrapAsync(async (req, res) => {
   let listing = await Listing.findById(req.params.id);
   let newReview = new Reviews(req.body.review);
   listing.reviews.push(newReview._id);
   await newReview.save();
   await listing.save();
  res.redirect(`/listing/${listing._id}`);
-});
+}));
 
 app.get("/", (req, res) => {
   res.send("working");
 });
 
-app.use((err, req, res, next) => {
-  // const { statusCode = 500, message = "Something went wrong!" } = err;
-  // res.status(statusCode).render("error", { error: message });
-  res.render("error.ejs");
+// 404 handler (for undefined routes)
+app.use((req, res, next) => {
+  res.status(404).render("error", { err: "Page not found!" });
 });
 
+// Global error handler (for all other errors)
 app.use((err, req, res, next) => {
+  console.error(err);  // log the error to the console
   const { statusCode = 500, message = "Something went wrong!" } = err;
-  res.status(statusCode).render("error", { error: message });
-  next(new ExpressError(400, "Page not found!!"));
+  res.status(statusCode).render("error", { err : message });
 });
+
 app.listen(3000, () => {
   console.log("app is listening to port 3000");
 });
