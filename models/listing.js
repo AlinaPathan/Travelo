@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Review=require("./review.js")
+const Review=require("./reviews.js")
 const defaultImg =
   "https://unsplash.com/photos/a-lake-with-mountains-in-the-background-and-clouds-in-the-sky-GxSAX1Du5-o";
 
@@ -27,7 +27,7 @@ const listingSchema = new Schema({
 });
 
 //to delete all the reviews of the listing when we delete listings
-listingSchema.post("findOneAndDelete",asyns(listing)=>{
+listingSchema.post("findOneAndDelete",async(listing)=>{
   if(listing){
     await reviewSchema.deleteMany({_id:{$in: listing.reviews}})
   }
