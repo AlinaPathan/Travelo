@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const Reviews = require("./models/reviews.js");
+const Review = require("./models/reviews.js");
 const Listing =require('./models/listing.js')
 const path = require("path");
 const methodOverride = require("method-override");
@@ -12,10 +12,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
-const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const listing=require("./routes/listing.js")
-const { listingSchema,reviewSchema } = require("./schema.js");
+const listing=require("./routes/listings.js")
+const reviews=require("./routes/reviews.js")
 
 
 
@@ -40,7 +39,7 @@ main()
 app.use("/listing",listing)
 
 //this line is for default reviews
-app.use()
+app.use("/listing",reviews)
 
 
 app.get("/", (req, res) => {
