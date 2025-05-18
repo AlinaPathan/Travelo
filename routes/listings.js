@@ -61,6 +61,11 @@ router.get(
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     const listing = await Listing.findById(id);
+     if(!listing){
+    req.flash("failure","Listing Does Not Exist.");
+    res.redirect("/listing");
+
+    }
     res.render("listings/edit.ejs", { listing });
   })
 );
@@ -73,7 +78,6 @@ router.put(
     await Listing.findByIdAndUpdate(id, { ...req.body.listing });
     // {...req.body.listing} is for the reconstruction of the listing object with new values.
    req.flash("success","Listing Updated Successfully!!")
-   
     res.redirect(`/listing/${id}`); //redirect to show page
   })
 );
@@ -86,6 +90,7 @@ router.delete(
     let deletedListing = await Listing.findByIdAndDelete(id);
     console.log(deletedListing);
     req.flash("success","Listing Deleted Successfully!")
+
 
     res.redirect("/listing");
   })
