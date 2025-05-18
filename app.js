@@ -15,7 +15,8 @@ app.use(express.static(path.join(__dirname, "/public")));
 const ExpressError = require("./utils/ExpressError.js");
 const listing=require("./routes/listings.js")
 const reviews=require("./routes/reviews.js")
-
+const session=require("express-session")
+const flash=require("connect-flash")
 
 
 //connecting database
@@ -31,6 +32,32 @@ main()
     console.log(err);
   });
 
+app.get("/", (req, res) => {
+  res.send("working");
+});
+
+
+const sessionOptions={
+  secret:"mysupersecretecoede",
+  resave:false,
+  saveUninitialized:true,
+  cookie:{
+    expires:Date.now()+7 * 24 * 60 * 60 *1000,//keeping user logged in for a week
+    maxAge:7 * 24 * 60 * 60 *1000,
+    httpOnly:true,
+  },
+}
+
+app.use(session(sessionOptions))
+
+app.use(flash())
+
+app.use((req,res,next)=>{
+  res.locals.success=req.flash("success");
+  console.log(res.locals.success)
+  next();
+})
+
 
 
 
@@ -42,9 +69,7 @@ app.use("/listing",listing)
 app.use("/listing",reviews)
 
 
-app.get("/", (req, res) => {
-  res.send("working");
-});
+
 
 // 404 handler (for undefined routes)
 app.use((req, res, next) => {
