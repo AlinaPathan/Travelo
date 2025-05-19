@@ -1,8 +1,17 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+
+//Importing  Models
 const Review = require("./models/reviews.js");
-const Listing =require('./models/listing.js')
+const Listing =require('./models/listing.js');
+const User=require("./models/user.js")
+
+//Importing Routes
+const listing=require("./routes/listings.js")
+const reviews=require("./routes/reviews.js")
+const user=require("./routes/user.js")
+
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
@@ -13,10 +22,12 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 const ExpressError = require("./utils/ExpressError.js");
-const listing=require("./routes/listings.js")
-const reviews=require("./routes/reviews.js")
 const session=require("express-session")
 const flash=require("connect-flash")
+const passport=require("passport")
+const LocalStrategy=require("passport-local")
+
+
 
 
 //connecting database
@@ -52,6 +63,13 @@ app.use(session(sessionOptions))
 
 app.use(flash())
 
+app.use(passport.initialize())
+app.use(passport.session())
+passport.use(new LocalStrategy(User.authenticate()))
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req,res,next)=>{
   res.locals.success=req.flash("success");
   res.locals.failure=req.flash("failure");
@@ -70,6 +88,8 @@ app.use("/listing",listing)
 //this line is for default reviews
 app.use("/listing",reviews)
 
+//this line is for default user
+app.use("/",user)
 
 
 
@@ -77,6 +97,10 @@ app.use("/listing",reviews)
 app.use((req, res, next) => {
   res.status(404).render("error", { err: "Page not found!" });
 });
+
+
+
+
 
 // Global error handler (for all other errors)
 app.use((err, req, res, next) => {
