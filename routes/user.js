@@ -65,7 +65,7 @@ router.get("/logout",(req,res)=>{
      return next(err)
     }
     req.flash("success","You are Logged out");
-    res.redirect("/listings")
+    res.redirect("/listing")
   })
 })
 
