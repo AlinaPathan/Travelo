@@ -52,7 +52,7 @@ router.post(
   }),
   async (req, res) => {
     req.flash("success","Welcome back to Travelo You are Logged in!!!")
-    let redirectUrl=res.locals.redirectUrl||"/listings"
+    let redirectUrl=res.locals.redirectUrl||"/listing"
     res.redirect(redirectUrl)
 }
 );
