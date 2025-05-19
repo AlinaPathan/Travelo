@@ -62,7 +62,7 @@ router.get(
     let { id } = req.params;
     const listing = await Listing.findById(id);
      if(!listing){
-    req.flash("failure","Listing Does Not Exist.");
+    req.flash("error","Listing Does Not Exist.");
     res.redirect("/listing");
 
     }

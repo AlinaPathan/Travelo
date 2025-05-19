@@ -8,6 +8,8 @@ const Listing = require("../models/listing.js");
 
 const validateReview = (req, res, next) => {
 
+
+
   if (req.body.review && req.body.review.comment) {
     req.body.review.comment = req.body.review.comment.trim();
   }
