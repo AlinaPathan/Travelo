@@ -5,24 +5,9 @@ const ExpressError = require("../utils/ExpressError.js");
 const { reviewSchema } = require("../schema.js");
 const Review = require("../models/reviews.js");
 const Listing = require("../models/listing.js");
-
-const validateReview = (req, res, next) => {
-
+const {validateReview}=require("../middleware.js")
 
 
-  if (req.body.review && req.body.review.comment) {
-    req.body.review.comment = req.body.review.comment.trim();
-  }
-
-  let { error } = reviewSchema.validate(req.body);
-  console.log(error);
-  if (error) {
-    let errMsg = error.details.map((el) => el.message).join(", ");
-    throw new ExpressError(400, errMsg);
-  } else {
-    next();
-  }
-};
 
 
 //reviews

@@ -22,7 +22,7 @@
             <strong>Location:</strong> <%= listing.location %><br />
             <strong>Country:</strong> <%= listing.country %><br />
           </p>
-
+          <% if(currUser && currUser._id.equals(listing.owner._id)){%>
           <div class="btns d-flex gap-2 mb-3">
             <a
               class="btn btn-dark edit-btn"
@@ -36,6 +36,7 @@
               <button class="btn btn-dark">DELETE</button>
             </form>
           </div>
+          <%}%>
         </div>
 
         <hr />

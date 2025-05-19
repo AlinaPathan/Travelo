@@ -4,20 +4,10 @@ const { listingSchema} = require("../schema.js");
 const Listing = require("../models/listing.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
-const {isLoggedIn}=require("../middleware.js")
+const {isLoggedIn,isOwner,validateListing}=require("../middleware.js")
 
 
-//to validate schema from joi
-const validateListing = (req, res, next) => {
-  let { error } = listingSchema.validate(req.body);
-  console.log(error);
-  if (error) {
-    let errMsg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError( errMsg,400);
-  } else {
-    next();
-  }
-};
+
 
 //alllist home page
 router.get(
@@ -64,6 +54,7 @@ router.get(
 router.get(
   "/:id/edit",
   isLoggedIn,
+  isOwner,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     const listing = await Listing.findById(id);
@@ -79,6 +70,7 @@ router.get(
 router.put(
   "/:id",
     isLoggedIn,
+    isOwner,
   validateListing,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
@@ -93,6 +85,7 @@ router.put(
 router.delete(
   "/:id",
     isLoggedIn,
+    isOwner,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     let deletedListing = await Listing.findByIdAndDelete(id);
