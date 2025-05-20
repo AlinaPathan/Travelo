@@ -53,10 +53,25 @@ module.exports.validateReview = (req, res, next) => {
       next();
  }
  
+
+ //to edit and delete listing
 module.exports.isOwner=async(req,res,next)=>{
    let { id } = req.params;
-  if(!listing.owne._id.equals(res.locals.currUser._id)){
+   let 
+  if(!listing.owner._id.equals(res.locals.currUser._id)){
     req.flash("error","You are not the owner of this listing.");
+   return  res.redirect(`/listing/${id}`)
+  }
+  next()
+}
+
+
+//to delete review
+module.exports.isAuthor=async(req,res,next)=>{
+   let {id, reviewId } = req.params;
+  let review= await Review.findById(reviewId);
+  if(!review.author._id.equals(res.locals.currUser._id)){
+    req.flash("error","You are not the owner of this review");
    return  res.redirect(`/listing/${id}`)
   }
   next()

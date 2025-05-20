@@ -5,7 +5,7 @@ const ExpressError = require("../utils/ExpressError.js");
 const { reviewSchema } = require("../schema.js");
 const Review = require("../models/reviews.js");
 const Listing = require("../models/listing.js");
-const {validateReview}=require("../middleware.js")
+const {validateReview, isLoggedIn, isAuthor}=require("../middleware.js")
 
 
 
@@ -13,21 +13,22 @@ const {validateReview}=require("../middleware.js")
 //reviews
 
 //post a review
-router.post("/:id/reviews",validateReview, wrapAsync(async (req, res) => {
+router.post("/:id/reviews",
+  isLoggedIn,
+  validateReview, wrapAsync(async (req, res) => {
   let listing = await Listing.findById(req.params.id);
   let newReview = new Review(req.body.review);
+  newReview.author=req.user._id;
   listing.reviews.push(newReview._id);
   await newReview.save();
   await listing.save();
  req.flash("success","Review Added!!")
-
-
  res.redirect(`/listing/${listing._id}`);
 }));
 
 
 //delete a review
-router.delete("/:id/reviews/:reviewId",wrapAsync(async(req,res)=>{
+router.delete("/:id/reviews/:reviewId",isLoggedIn,isAuthor,  wrapAsync(async(req,res)=>{
   let {id ,reviewId }=req.params;
     if (!Listing) {
     return next(new ExpressError("Listing not found", 404));
