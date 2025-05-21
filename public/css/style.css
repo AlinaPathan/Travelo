@@ -101,3 +101,14 @@ body{
     border-bottom: 1px solid #dee2e6; /* Use Bootstrap's border color */
   }
 }
+.small-stars {
+  display: inline-block;
+  transform: scale(0.50);
+  transform-origin: left center;
+  height: 20px; /* Optional: ensures height fits */
+  overflow: visible;    /* Keeps alignment to the left */
+}
+
+.starability-result span::before {
+  color: #FFC107; /* gold */
+}
