@@ -1,9 +1,10 @@
-const Listing=require("./models/listing");
+const Listing=require("./models/listing.js");
 const Review = require("./models/reviews.js");
 const { listingSchema} = require("./schema.js");
 const { reviewSchema } = require("./schema.js");
 const ExpressError = require("./utils/ExpressError.js");
  
+
 
 //to validate schema from joi
 module.exports.validateListing = (req, res, next) => {
@@ -57,7 +58,7 @@ module.exports.validateReview = (req, res, next) => {
  //to edit and delete listing
 module.exports.isOwner=async(req,res,next)=>{
    let { id } = req.params;
-   let 
+  let listing= await Listing.findById(id);
   if(!listing.owner._id.equals(res.locals.currUser._id)){
     req.flash("error","You are not the owner of this listing.");
    return  res.redirect(`/listing/${id}`)
