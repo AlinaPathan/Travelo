@@ -96,3 +96,8 @@ body{
     justify-content: flex-start;
     gap: 20px;
 }
+@media (max-width: 750.98px) { /* md and below */
+  .custom-border-bottom {
+    border-bottom: 1px solid #dee2e6; /* Use Bootstrap's border color */
+  }
+}

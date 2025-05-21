@@ -9,14 +9,6 @@ const {isLoggedIn,isOwner,validateListing}=require("../middleware.js")
 const listingController=require("../controllers/listings.js");
 
 
-
-//alllist home page
-router.get(
-  "/",
-  wrapAsync(listingController.allListing)
-);
-
-
 //newww
 router.get("/new",isLoggedIn,(req, res) => {
  
@@ -24,20 +16,16 @@ router.get("/new",isLoggedIn,(req, res) => {
 });
 
 
+router.route("/")
+.get(wrapAsync(listingController.allListing))//get allisting page
+.post(isLoggedIn,validateListing,wrapAsync(listingController.postNewListing));//post ne listing
 
-//add created listing
-router.post(
-  "/",
-    isLoggedIn,
-  validateListing,
-  wrapAsync(listingController.postNewListing)
-);
 
-//show route
-router.get(
-  "/:id",
-  wrapAsync(listingController.showListing)
-);
+router.route( "/:id")
+.get(wrapAsync(listingController.showListing))//show listing route 
+.put( isLoggedIn, isOwner,validateListing,wrapAsync(listingController.postEditedListing))//add edited listing
+.delete(isLoggedIn, isOwner,wrapAsync(listingController.deleteListing));//delete listing
+
 
 //Edit listing
 router.get(
@@ -46,22 +34,7 @@ router.get(
   isOwner,
   wrapAsync(listingController.editListing)
 );
-//post edited listing
-router.put(
-  "/:id",
-    isLoggedIn,
-    isOwner,
-  validateListing,
-  wrapAsync(listingController.postEditedListing)
-);
 
-//delete listing
-router.delete(
-  "/:id",
-    isLoggedIn,
-    isOwner,
-  wrapAsync(listingController.deleteListing)
-);
 
 
 module.exports=router;

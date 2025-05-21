@@ -1,5 +1,10 @@
 const User=require("../models/user.js")
 
+//get signup form
+ module.exports.getSignup=(req, res) => {
+  res.render("users/signup.ejs");
+}
+//post signup form
 
 module.exports.postSignupForm=async (req, res) => {
     try {
@@ -22,6 +27,11 @@ module.exports.postSignupForm=async (req, res) => {
     }
   }
 
+
+//get login
+ module.exports.getLogin=(req, res) => {
+  res.render("users/login.ejs");
+}
   //post login form
   module.exports.postLogin= async (req, res) => {
     req.flash("success","Welcome back to Travelo You are Logged in!!!")
